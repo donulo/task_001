@@ -3,8 +3,8 @@
 #include <string.h>
 #define MAX_LENGTH 16
 
-int toArabic(char roman[MAX_LENGTH]);
 int getArabicDigit(char roman);
+int toArabic(char roman[MAX_LENGTH]);
 
 int main() {
     char inputString[MAX_LENGTH];
@@ -16,34 +16,6 @@ int main() {
     return result;
 }
 
-int toArabic(char roman[MAX_LENGTH]) {
-    int result = 0;
-    regex_t reg;
-    regcomp(&reg, "^(M{0,3})(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$", REG_EXTENDED);
-
-    if (!regexec(&reg, roman, 0, NULL, 0)) {
-        int i = 0;
-        while (getArabicDigit(roman[i])) {
-            int curr = getArabicDigit(roman[i]);
-            int next = getArabicDigit(roman[i + 1]);
-
-            if (next && curr < next) {
-                result += next;
-                result -= curr;
-                i++;
-            } else {
-                result += curr;
-            }
-            i++;
-        }
-    } else if (!strcmp(roman, "N") || !strcmp(roman, "nulla") || !strcmp(roman, "nihil"))
-        result = 0;
-    else
-        result = -1;
-
-    regfree(&reg);
-    return result;
-}
 int getArabicDigit(char roman) {
     int result;
     switch (roman) {
@@ -72,5 +44,33 @@ int getArabicDigit(char roman) {
             result = 0;
             break;
     }
+    return result;
+}
+int toArabic(char roman[MAX_LENGTH]) {
+    int result = 0;
+    regex_t reg;
+    regcomp(&reg, "^(M{0,3})(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$", REG_EXTENDED);
+
+    if (!regexec(&reg, roman, 0, NULL, 0)) {
+        int i = 0;
+        while (getArabicDigit(roman[i])) {
+            int curr = getArabicDigit(roman[i]);
+            int next = getArabicDigit(roman[i + 1]);
+
+            if (next && curr < next) {
+                result += next;
+                result -= curr;
+                i++;
+            } else {
+                result += curr;
+            }
+            i++;
+        }
+    } else if (!strcmp(roman, "N") || !strcmp(roman, "nulla") || !strcmp(roman, "nihil"))
+        result = 0;
+    else
+        result = -1;
+
+    regfree(&reg);
     return result;
 }
